@@ -8,7 +8,7 @@ function error(status: number, body: string): Response {
 }
 
 export default {
-  async fetch(request): Promise<Response> {
+  fetch(request): Response {
     // This is an easy way to limit CPU usage costs per request, as section 3 of
     // RFC 9112 recommends supporting at least 8000 bytes of the request line.
     if (request.url.length > 8000) {
