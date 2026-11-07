@@ -3,6 +3,7 @@
   "name": "linkhat",
   "main": "src/index.ts",
   "compatibility_date": "2026-11-04",
+  "workers_dev": false,
   "assets": {
     "directory": "./public",
     "run_worker_first": ["/_"],
