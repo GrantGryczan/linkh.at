@@ -56,20 +56,20 @@ export default {
         );
       }
 
-      let weight = DEFAULT_WEIGHT;
+      let weight: number;
 
-      if (weightString !== "") {
+      if (weightString === "") {
+        weight = DEFAULT_WEIGHT;
+      } else if (/^[1-9]\d{0,2}$/.test(weightString)) {
+        weight = Number.parseInt(weightString);
+      } else {
         // Weights must be limited integers to make phishers less likely to
         // abuse them by setting one location with >99.9% weight, which would
         // approximate a deterministic redirect.
-        if (!/^[1-9]\d{0,2}$/.test(weightString)) {
-          return error(
-            400,
-            "Each weight must be an integer 1 to 999 if set (no leading zeros)",
-          );
-        }
-
-        weight = Number.parseInt(weightString);
+        return error(
+          400,
+          "Each weight must be an integer 1 to 999 if set (no leading zeros)",
+        );
       }
 
       // Duplicates usually result from user error and would bypass the minimum
