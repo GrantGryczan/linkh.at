@@ -17,6 +17,14 @@ export default {
 
     const { searchParams } = new URL(request.url);
 
+    // Let people strip off the end of the URL to reach the homepage.
+    if (searchParams.size === 0) {
+      return new Response(null, {
+        status: 308,
+        headers: { Location: "/" },
+      });
+    }
+
     // This service is intended for randomized redirects, not deterministic
     // redirects. Deterministic redirect services (especially link shorteners)
     // are far more likely to be abused for phishing.
