@@ -30,7 +30,8 @@ export default {
 
     for (const [location, weightString] of searchParams) {
       try {
-        // Normalize the URL first to catch more duplicates.
+        // Normalize the URL to catch more duplicates. Omitting `https://` saves
+        // characters towards the URL size limit.
         const normalizedUrl = new URL("https://" + location).href;
 
         // Duplicates usually result from user error and would bypass the
