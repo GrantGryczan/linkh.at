@@ -81,6 +81,6 @@ export default {
       });
     }
 
-    return error(500, "Server error: No location matched");
+    return error(500, "Internal error: entered unreachable code");
   },
 } satisfies ExportedHandler<Env>;
