@@ -1,3 +1,5 @@
+const DEFAULT_WEIGHT = 1;
+
 function error(status: number, body: string): Response {
   return new Response(body, {
     status,
@@ -38,12 +40,13 @@ export default {
 
     let totalWeight = 0;
 
-    const seenUrls = new Set<string>();
+    const weightsByUrl = new Map<string, number>();
 
     for (const [location, weightString] of searchParams) {
       let url: string;
       try {
-        // Normalize the URL to catch more duplicates. Omitting `https://` saves
+        // Normalize the URL to catch more duplicates and ensure the final
+        // `Location` header is well-formed. Omitting `https://` saves
         // characters towards the URL size limit.
         url = normalizeUrl("https://" + location);
       } catch {
@@ -53,44 +56,44 @@ export default {
         );
       }
 
+      let weight = DEFAULT_WEIGHT;
+
+      if (weightString !== "") {
+        // Weights must be limited integers to make phishers less likely to
+        // abuse them by setting one location with >99.9% weight, which would
+        // approximate a deterministic redirect.
+        if (!/^[1-9]\d{0,2}$/.test(weightString)) {
+          return error(
+            400,
+            "Each weight must be an integer 1 to 999 if set (no leading zeros)",
+          );
+        }
+
+        weight = Number.parseInt(weightString);
+      }
+
       // Duplicates usually result from user error and would bypass the minimum
       // location count requirement.
-      if (seenUrls.has(url)) {
+      if (weightsByUrl.has(url)) {
         return error(400, "Each location must not be duplicated");
       }
 
-      seenUrls.add(url);
-
-      // Weights must be limited integers to make phishers less likely to abuse
-      // them by setting one location with >99.9% weight, which would
-      // approximate a deterministic redirect.
-      if (!/^[1-9]\d{0,2}$/.test(weightString)) {
-        return error(
-          400,
-          "Each weight must be an integer 1 to 999 (no leading zeros)",
-        );
-      }
-
-      totalWeight += Number.parseInt(weightString);
+      weightsByUrl.set(url, weight);
+      totalWeight += weight;
     }
 
     let remainingWeight = Math.floor(Math.random() * totalWeight);
 
-    for (const [location, weightString] of searchParams) {
-      const weight = Number.parseInt(weightString);
-
+    for (const [url, weight] of weightsByUrl) {
       if (remainingWeight >= weight) {
         remainingWeight -= weight;
         continue;
       }
 
-      // Normalize the URL to ensure the `Location` header is well-formed.
-      const normalizedUrl = new URL("https://" + location).href;
-
       return new Response(null, {
         status: 307,
         headers: {
-          Location: normalizedUrl,
+          Location: url,
         },
       });
     }
