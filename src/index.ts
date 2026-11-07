@@ -7,6 +7,10 @@ function error(status: number, body: string): Response {
   });
 }
 
+function normalizeUrl(url: string): string {
+  return new URL(url).href;
+}
+
 export default {
   fetch(request): Response {
     // This is an easy way to limit CPU usage costs per request, as section 3 of
@@ -37,24 +41,25 @@ export default {
     const seenUrls = new Set<string>();
 
     for (const [location, weightString] of searchParams) {
+      let url: string;
       try {
         // Normalize the URL to catch more duplicates. Omitting `https://` saves
         // characters towards the URL size limit.
-        const normalizedUrl = new URL("https://" + location).href;
-
-        // Duplicates usually result from user error and would bypass the
-        // minimum location count requirement.
-        if (seenUrls.has(normalizedUrl)) {
-          return error(400, "Each location must not be duplicated");
-        }
-
-        seenUrls.add(normalizedUrl);
+        url = normalizeUrl("https://" + location);
       } catch {
         return error(
           400,
           "Each location must be a valid URL (without 'https://')",
         );
       }
+
+      // Duplicates usually result from user error and would bypass the minimum
+      // location count requirement.
+      if (seenUrls.has(url)) {
+        return error(400, "Each location must not be duplicated");
+      }
+
+      seenUrls.add(url);
 
       // Weights must be limited integers to make phishers less likely to abuse
       // them by setting one location with >99.9% weight, which would
