@@ -21,10 +21,10 @@ export default {
       return error(413, "The request URL must not exceed 8000 characters");
     }
 
-    const { searchParams } = new URL(request.url);
+    const requestUrl = new URL(request.url);
 
     // Let people strip off the end of the URL to reach the homepage.
-    if (searchParams.size === 0) {
+    if (requestUrl.searchParams.size === 0) {
       return new Response(null, {
         status: 308,
         headers: { Location: "/" },
@@ -34,15 +34,22 @@ export default {
     // This service is intended for randomized redirects, not deterministic
     // redirects. Deterministic redirect services (especially link shorteners)
     // are far more likely to be abused for phishing.
-    if (searchParams.size < 2) {
+    if (requestUrl.searchParams.size < 2) {
       return error(400, "At least 2 locations are required");
+    }
+
+    // Prevent phishers obfuscating locations with excessive percent encoding,
+    // like `%65%78%61%6D%70%6C%65%2E%63%6F%6D` instead of `example.com`.
+    const normalizedSearch = "?" + requestUrl.searchParams.toString();
+    if (normalizedSearch !== requestUrl.search) {
+      return error(400, "The URL query's encoding must be normalized");
     }
 
     let totalWeight = 0;
 
     const weightsByUrl = new Map<string, number>();
 
-    for (const [location, weightString] of searchParams) {
+    for (const [location, weightString] of requestUrl.searchParams) {
       let url: string;
       try {
         // Normalize the URL to catch more duplicates and ensure the final
