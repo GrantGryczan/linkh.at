@@ -18,6 +18,16 @@ function error(status: number, body: string): Response {
 
 export default {
   fetch(request): Response {
+    // Other request methods are generally sent from clients that can implement
+    // their own randomization logic. They don't need this service and may cause
+    // excessive automated traffic, so there's little reason to allow them.
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      return new Response(null, {
+        status: 204,
+        headers: { Allow: "GET, HEAD" },
+      });
+    }
+
     // These URLs can get very long, leading to potential interoperability
     // issues. Section 3 of RFC 9112 recommends supporting at least 8000 bytes
     // of the request line, so that seems like a sufficient URL size limit.
