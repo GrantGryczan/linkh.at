@@ -1,5 +1,12 @@
 const DEFAULT_WEIGHT = 1;
 
+/**
+ * Matches any valid percent encoding that can't be produced by
+ * `encodeURIComponent`.
+ */
+const USELESS_PERCENT_ENCODING =
+  /%(?:2[17-9ade]|3\d|[46][1-9a-f]|5[\daf]|7[\dae])/i;
+
 function error(status: number, body: string): Response {
   return new Response(body, {
     status,
@@ -38,11 +45,14 @@ export default {
       return error(400, "At least 2 locations are required");
     }
 
-    // Prevent phishers obfuscating locations with excessive percent encoding,
-    // like `%65%78%61%6D%70%6C%65%2E%63%6F%6D` instead of `example.com`.
-    const normalizedSearch = "?" + requestUrl.searchParams.toString();
-    if (normalizedSearch !== requestUrl.search) {
-      return error(400, "The URL query's encoding must be normalized");
+    // Prevent phishers from obfuscating locations with excessive percent
+    // encoding, like `%65%78%61%6D%70%6C%65%2E%63%6F%6D` instead of
+    // `example.com`.
+    if (USELESS_PERCENT_ENCODING.test(requestUrl.search)) {
+      return error(
+        400,
+        "The URL query must not be excessively percent-encoded",
+      );
     }
 
     let totalWeight = 0;
