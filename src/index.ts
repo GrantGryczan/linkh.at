@@ -50,16 +50,28 @@ export default {
     const weightsByUrl = new Map<string, number>();
 
     for (const [location, weightString] of requestUrl.searchParams) {
+      // Omitting `https://` saves characters towards the URL size limit.
+      const rawUrl = "https://" + location;
+
       let url: string;
       try {
         // Normalize the URL to catch more duplicates and ensure the final
-        // `Location` header is well-formed. Omitting `https://` saves
-        // characters towards the URL size limit.
-        url = normalizeUrl("https://" + location);
+        // `Location` header is well-formed.
+        url = normalizeUrl(rawUrl);
       } catch {
         return error(
           400,
-          "Each location must be a valid URL (without 'https://')",
+          "Each location must be a valid URL (omitting 'https://')",
+        );
+      }
+
+      // Requiring normalized URLs makes the service more future-proof since
+      // JavaScript's URL parser accepts some URLs that are technically invalid,
+      // such as `https:////example.com`.
+      if (rawUrl !== url) {
+        return error(
+          400,
+          "Each location must be a normalized URL (omitting 'https://')",
         );
       }
 
