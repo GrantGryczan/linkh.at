@@ -22,8 +22,9 @@ function normalizeUrl(url: string): string {
 
 export default {
   fetch(request): Response {
-    // This is an easy way to limit CPU usage costs per request, as section 3 of
-    // RFC 9112 recommends supporting at least 8000 bytes of the request line.
+    // These URLs can get very long, leading to potential interoperability
+    // issues. Section 3 of RFC 9112 recommends supporting at least 8000 bytes
+    // of the request line, so that seems like a sufficient URL size limit.
     if (request.url.length > 8000) {
       return error(413, "The request URL must not exceed 8000 characters");
     }
