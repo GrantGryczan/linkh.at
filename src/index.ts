@@ -7,6 +7,12 @@ const DEFAULT_WEIGHT = 1;
 const USELESS_PERCENT_ENCODING =
   /%(?:2[17-9ade]|3\d|[46][1-9a-f]|5[\daf]|7[\dae])/i;
 
+const CORS_HEADERS = {
+  // Use permissive CORS headers to pass CORS burden to the redirect location.
+  "Access-Control-Allow-Headers": "*",
+  "Access-Control-Allow-Origin": "*",
+};
+
 function error(status: number, body: string): Response {
   return new Response(body, {
     status,
@@ -22,10 +28,17 @@ export default {
     // their own randomization logic. They don't need this service and may cause
     // excessive automated traffic, so there's little reason to allow them.
     if (request.method !== "GET" && request.method !== "HEAD") {
-      return new Response(null, {
-        status: 204,
-        headers: { Allow: "GET, HEAD" },
+      const headers = { Allow: "GET, HEAD, OPTIONS" };
+
+      if (request.method !== "OPTIONS") {
+        return new Response(null, { status: 405, headers });
+      }
+
+      Object.assign(headers, CORS_HEADERS, {
+        "Access-Control-Max-Age": "86400",
       });
+
+      return new Response(null, { status: 204, headers });
     }
 
     // These URLs can get very long, leading to potential interoperability
@@ -125,6 +138,7 @@ export default {
         status: 307,
         headers: {
           Location: url,
+          ...CORS_HEADERS,
         },
       });
     }
