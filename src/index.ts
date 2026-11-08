@@ -16,10 +16,6 @@ function error(status: number, body: string): Response {
   });
 }
 
-function normalizeUrl(url: string): string {
-  return new URL(url).href;
-}
-
 export default {
   fetch(request): Response {
     // These URLs can get very long, leading to potential interoperability
@@ -61,11 +57,9 @@ export default {
       // Omitting `https://` saves characters towards the URL size limit.
       const rawUrl = "https://" + location;
 
-      let url: string;
+      let normalizedUrl: string;
       try {
-        // Normalize the URL to catch more duplicates and ensure the final
-        // `Location` header is well-formed.
-        url = normalizeUrl(rawUrl);
+        normalizedUrl = new URL(rawUrl).href;
       } catch {
         return error(
           400,
@@ -73,13 +67,13 @@ export default {
         );
       }
 
-      // Requiring normalized URLs makes the service more future-proof since
-      // JavaScript's URL parser accepts some URLs that are technically invalid,
-      // such as `https:////example.com`.
-      if (rawUrl !== url) {
+      // Requiring normalized URLs makes the service more secure and
+      // future-proof since JavaScript's URL parser accepts some URLs that are
+      // technically invalid, such as `https:////example.com`.
+      if (rawUrl !== normalizedUrl) {
         return error(
           400,
-          "Each location must be a normalized URL (omitting 'https://')",
+          "Each location must be a valid, normalized URL (omitting 'https://')",
         );
       }
 
@@ -101,11 +95,11 @@ export default {
 
       // Duplicates usually result from user error and would bypass the minimum
       // location count requirement.
-      if (weightsByUrl.has(url)) {
+      if (weightsByUrl.has(normalizedUrl)) {
         return error(400, "Each location must not be duplicated");
       }
 
-      weightsByUrl.set(url, weight);
+      weightsByUrl.set(normalizedUrl, weight);
       totalWeight += weight;
     }
 
