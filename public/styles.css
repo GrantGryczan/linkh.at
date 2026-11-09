@@ -1,16 +1,38 @@
 :root {
   font-family: system-ui, sans-serif;
   line-height: 1.5;
+  color-scheme: dark light;
+
+  --color-background: #ffffff;
+  --color-button-background: transparent;
+  --color-button-background-hover: #ececec;
+  --color-button-background-active: #dfdfdf;
+  --color-input-background: #ffffff;
+  --color-input-border: #767676;
+  --color-sticky-edge: #d0d0d0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    color-scheme: dark;
+    --color-background: #121212;
+    --color-button-background: transparent;
+    --color-button-background-hover: #313131;
+    --color-button-background-active: #3e3e3e;
+    --color-input-background: #3b3b3b;
+    --color-input-border: #606060;
+    --color-sticky-edge: #303030;
   }
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 4em;
+  background-color: var(--color-background);
 }
 
 @media (width < 32em) {
@@ -20,6 +42,153 @@ body {
 }
 
 #app {
-  max-width: 64em;
+  max-width: 64rem;
   margin: 0 auto;
+}
+
+noscript {
+  font-weight: bold;
+}
+
+.icon {
+  vertical-align: bottom;
+  width: 1em;
+  height: 1em;
+}
+
+input,
+textarea {
+  font-size: 1em;
+  font-family: inherit;
+  vertical-align: middle;
+  border: 1px solid var(--color-input-border);
+  border-radius: 0.5em;
+  background-color: var(--color-input-background);
+
+  /* Meet the target size required by WCAG 2.1 SC 2.5.5. */
+  line-height: 1.375;
+  padding: 0.625em;
+}
+
+button {
+  font-size: 1em;
+  font-family: inherit;
+  vertical-align: middle;
+  border: none;
+  border-radius: 0.5em;
+  background-color: var(--color-button-background);
+  cursor: pointer;
+  transition: 0.1s opacity ease-out;
+
+  /* Meet the target size required by WCAG 2.1 SC 2.5.5. */
+  padding: 0.5em;
+  line-height: 1.75;
+
+  &:hover {
+    background-color: var(--color-button-background-hover);
+  }
+
+  &:active {
+    background-color: var(--color-button-background-active);
+  }
+
+  &:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+button .icon {
+  font-size: 1lh;
+}
+
+.button-label {
+  margin: 0 0.5em;
+
+  .icon + & {
+    margin-left: 0;
+  }
+}
+
+.screen-reader-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  clip: rect(0, 0, 0, 0);
+}
+
+#controls {
+  margin: 3rem 0;
+}
+
+#output {
+  position: sticky;
+  top: 0;
+  background-color: var(--color-background);
+  margin: 3rem 0;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--color-sticky-edge);
+}
+
+#output-controls {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#output-url {
+  flex-grow: 1;
+  word-break: break-all;
+  resize: vertical;
+  box-sizing: content-box;
+  min-height: 1lh;
+  height: 1lh;
+  max-height: 50svh;
+  scrollbar-gutter: stable;
+  font-size: 1.25rem;
+}
+
+#locations-table {
+  border-spacing: 0;
+  border-collapse: collapse;
+
+  /* Stop the `width: 100%` column from squeezing the others too much. */
+  white-space: nowrap;
+}
+
+#locations-table :is(td, th) {
+  border: 0px solid transparent;
+  border-bottom-width: 1rem;
+}
+
+#locations-table th {
+  font-weight: normal;
+  text-align: left;
+}
+
+#locations-table tr :not(:first-child) {
+  border-left-width: 0.5rem;
+}
+
+#location-url-label {
+  width: 100%;
+}
+
+#locations-table td {
+  padding: 0;
+}
+
+.location-url {
+  width: 100%;
+}
+
+.location-weight {
+  min-width: calc(4em + 2px);
+  width: 100%;
+}
+
+.location-remove-button {
+  margin-left: 0.5rem;
 }
