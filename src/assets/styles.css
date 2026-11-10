@@ -65,6 +65,7 @@ input,
 textarea {
   font-size: 1em;
   font-family: inherit;
+  color: inherit;
   vertical-align: middle;
   border: 1px solid var(--color-input-border);
   border-radius: 0.5em;
@@ -82,6 +83,7 @@ textarea {
 button {
   font-size: 1em;
   font-family: inherit;
+  color: inherit;
   vertical-align: middle;
   border: none;
   border-radius: 0.5em;
