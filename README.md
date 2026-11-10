@@ -4,6 +4,24 @@
 
 This is made to be able to run on the Cloudflare Workers Free plan.
 
+## Project Setup
+
+```sh
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+### Type-Check, Compile, and Minify for Production
+
+```sh
+npm run build
+```
+
 ## License
 
     Copyright (C) 2026 Grant Gryczan
