@@ -4,22 +4,26 @@
   color-scheme: dark light;
 
   --color-background: #ffffff;
+  --color-text: #000000;
   --color-button-background: transparent;
   --color-button-background-hover: #ececec;
   --color-button-background-active: #dfdfdf;
   --color-input-background: #ffffff;
   --color-input-border: #767676;
+  --color-input-placeholder: #767676;
   --color-sticky-edge: #d0d0d0;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: #121212;
+    --color-text: #ffffff;
     --color-button-background: transparent;
     --color-button-background-hover: #313131;
     --color-button-background-active: #3e3e3e;
-    --color-input-background: #3b3b3b;
-    --color-input-border: #606060;
+    --color-input-background: #2c2c2c;
+    --color-input-border: #767676;
+    --color-input-placeholder: #767676;
     --color-sticky-edge: #303030;
   }
 }
@@ -33,6 +37,7 @@
 body {
   margin: 4em;
   background-color: var(--color-background);
+  color: var(--color-text);
 }
 
 @media (width < 32em) {
@@ -68,6 +73,10 @@ textarea {
   /* Meet the target size required by WCAG 2.1 SC 2.5.5. */
   line-height: 1.375;
   padding: 0.625em;
+
+  &::placeholder {
+    color: var(--color-input-placeholder);
+  }
 }
 
 button {
