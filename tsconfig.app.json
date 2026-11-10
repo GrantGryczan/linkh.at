@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client"],
+
+    // Just like default Vite, use only Baseline widely available browser
+    // features: APIs supported by all major browsers as of 2.5 years ago.
+    "lib": ["ES2024", "DOM", "DOM.Iterable"]
+  },
+  "include": ["./src/**/*"]
+}
