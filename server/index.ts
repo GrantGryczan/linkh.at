@@ -52,7 +52,10 @@ export default {
 
     // Let people strip off the end of the URL to reach the homepage.
     if (requestUrl.searchParams.size === 0) {
-      return Response.redirect("/", 308);
+      return new Response(null, {
+        status: 308,
+        headers: { Location: "/" },
+      });
     }
 
     // This service is intended for randomized redirects, not deterministic
