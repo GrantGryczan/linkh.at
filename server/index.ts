@@ -1,3 +1,7 @@
+// Section 3 of RFC 9112 recommends supporting at least 8000 bytes of the
+// request line, so that seems like a sufficient URL size limit.
+const MAX_REQUEST_URL_LENGTH = 8000;
+
 const DEFAULT_WEIGHT = 1;
 
 /**
@@ -41,10 +45,9 @@ export default {
       return new Response(null, { status: 204, headers });
     }
 
-    // These URLs can get very long, leading to potential interoperability
-    // issues. Section 3 of RFC 9112 recommends supporting at least 8000 bytes
-    // of the request line, so that seems like a sufficient URL size limit.
-    if (request.url.length > 8000) {
+    // These URLs can get very long, so limiting them mitigates potential
+    // interoperability issues.
+    if (request.url.length > MAX_REQUEST_URL_LENGTH) {
       return error(413, "The request URL must not exceed 8000 characters");
     }
 
