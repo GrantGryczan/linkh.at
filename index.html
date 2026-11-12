@@ -9,7 +9,7 @@
       content="Link Hat is a free and open-source redirect randomizer. You customize a list of URLs, and we'll generate a link to randomly redirect to one of them. Use larger weight numbers to make some URLs more likely than others. This can randomize redirects to anything online, not just websites: rotate between images, videos, audio, and so on."
     />
     <link rel="stylesheet" href="./src/assets/styles.css" />
-    <script type="module" src="./src/main.ts"></script>
+    <script type="module" blocking="render" src="./src/main.ts"></script>
   </head>
   <body>
     <div id="app">
@@ -51,7 +51,6 @@
                 type="button"
                 aria-label="Copy URL to Clipboard"
                 title="Copy URL to Clipboard"
-                disabled
               >
                 <svg
                   class="icon"
@@ -72,7 +71,7 @@
             </div>
           </div>
 
-          <form>
+          <form id="locations-form">
             <table id="locations-table">
               <thead>
                 <tr>
@@ -87,6 +86,7 @@
                 <tr class="location">
                   <td>
                     <input
+                      name="url"
                       class="location-url"
                       aria-labelledby="location-url-label"
                       type="url"
@@ -98,6 +98,7 @@
                   </td>
                   <td>
                     <input
+                      name="weight"
                       class="location-weight"
                       aria-labelledby="location-weight-label"
                       type="number"
@@ -110,9 +111,11 @@
                   <td>
                     <button
                       type="button"
+                      name="remove"
                       class="location-remove-button"
                       aria-label="Remove URL"
                       title="Remove URL"
+                      disabled
                     >
                       <svg
                         class="icon"
@@ -135,7 +138,7 @@
               </tbody>
             </table>
 
-            <button id="add-location-button" type="submit">
+            <button type="submit">
               <svg
                 class="icon"
                 aria-hidden
