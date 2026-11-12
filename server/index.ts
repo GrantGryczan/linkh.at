@@ -48,7 +48,10 @@ export default {
     // These URLs can get very long, so limiting them mitigates potential
     // interoperability issues.
     if (request.url.length > MAX_REQUEST_URL_LENGTH) {
-      return error(413, "The request URL must not exceed 8000 characters");
+      return error(
+        413,
+        `The request URL must not exceed ${MAX_REQUEST_URL_LENGTH} characters`,
+      );
     }
 
     const requestUrl = new URL(request.url);
