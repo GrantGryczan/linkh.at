@@ -102,7 +102,8 @@ function updateOutputUrl(): void {
     const normalizedUrl = new URL(urlInput.value).href;
     const compressedUrl = normalizedUrl.slice("https://".length);
 
-    // Leaving slashes decoded saves characters towards the URL size limit.
+    // Leaving slashes decoded saves characters towards the URL size limit and
+    // improves readability.
     outputUrl += encodeURIComponent(compressedUrl).replaceAll("%2F", "/");
 
     if (weightInput.valueAsNumber === DEFAULT_WEIGHT) {
