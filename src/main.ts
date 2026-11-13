@@ -7,6 +7,9 @@ const outputUrlInput = document.getElementById(
 const outputCopyButton = document.getElementById(
   "output-copy-button",
 ) as HTMLButtonElement;
+const outputCopyStatus = document.getElementById(
+  "output-copy-status",
+) as HTMLDivElement;
 const locationsForm = document.getElementById(
   "locations-form",
 ) as HTMLFormElement;
@@ -83,9 +86,10 @@ function updateLocationRemoveButtons(): void {
   }
 }
 
-function updateOutputUrl(): void {
+function updateOutput(): void {
   if (!locationsForm.checkValidity()) {
     outputUrlInput.value = "";
+    outputCopyButton.disabled = true;
     return;
   }
 
@@ -115,6 +119,7 @@ function updateOutputUrl(): void {
   }
 
   outputUrlInput.value = outputUrl;
+  outputCopyButton.disabled = false;
 }
 
 function insertLocationRow(): void {
@@ -128,7 +133,7 @@ function insertLocationRow(): void {
   }
 
   updateLocationRemoveButtons();
-  updateOutputUrl();
+  updateOutput();
 
   const newInput = newRow.getElementsByTagName("input")[0];
   newInput.select();
@@ -142,7 +147,7 @@ function resetLocationRow(row: HTMLTableRowElement): void {
 
   updateLocationUrlInputs();
   updateLocationRemoveButtons();
-  updateOutputUrl();
+  updateOutput();
 
   urlInput.select();
 }
@@ -153,7 +158,7 @@ function removeLocationRow(row: HTMLTableRowElement): void {
 
   updateLocationUrlInputs();
   updateLocationRemoveButtons();
-  updateOutputUrl();
+  updateOutput();
 }
 
 function handleRemoveButtonClick(removeButton: HTMLButtonElement): void {
@@ -188,7 +193,38 @@ locationsSection.addEventListener("input", (event) => {
   }
 
   updateLocationRemoveButtons();
-  updateOutputUrl();
+  updateOutput();
+});
+
+function hideCopyStatus(): void {
+  outputCopyStatus.hidden = true;
+  outputCopyStatus.textContent = "";
+}
+
+function showCopyStatus(text: string): void {
+  if (document.activeElement !== outputCopyButton) {
+    return;
+  }
+
+  outputCopyStatus.hidden = false;
+  outputCopyStatus.textContent = text;
+}
+
+outputCopyButton.addEventListener("blur", hideCopyStatus);
+
+outputCopyButton.addEventListener("click", async () => {
+  // ARIA live regions only announce changes, so hide the status first in case
+  // the content will be the same.
+  hideCopyStatus();
+
+  try {
+    await navigator.clipboard.writeText(outputUrlInput.value);
+  } catch {
+    showCopyStatus("Failed to copy");
+    return;
+  }
+
+  showCopyStatus("Copied");
 });
 
 // At least 2 locations are required, so add a second initial row.

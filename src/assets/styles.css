@@ -11,6 +11,7 @@
   --color-input-background: #ffffff;
   --color-input-border: #767676;
   --color-input-placeholder: #767676;
+  --color-status-background: #dfdfdf;
   --color-sticky-edge: #d0d0d0;
 }
 
@@ -24,6 +25,7 @@
     --color-input-background: #2c2c2c;
     --color-input-border: #767676;
     --color-input-placeholder: #767676;
+    --color-status-background: #3e3e3e;
     --color-sticky-edge: #303030;
   }
 }
@@ -159,6 +161,32 @@ button .icon {
   max-height: 50svh;
   scrollbar-gutter: stable;
   font-size: 1.25rem;
+}
+
+#output-copy-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+#output-copy-status {
+  position: absolute;
+  bottom: 100%;
+  background-color: var(--color-status-background);
+  padding: 0.25em 0.5em;
+  border-radius: 0.5em;
+  margin-bottom: 0.5em;
+  white-space: nowrap;
+
+  &::after {
+    content: "";
+    position: absolute;
+    border: 0.5em solid transparent;
+    border-top-color: var(--color-status-background);
+    top: 100%;
+    left: 50%;
+    margin-left: -0.5em;
+  }
 }
 
 #locations-table {
