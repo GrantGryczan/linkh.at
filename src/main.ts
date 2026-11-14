@@ -58,7 +58,7 @@ function updateLocationUrlInputs(): void {
 
     if (seenUrls.has(normalizedUrl)) {
       urlInput.setCustomValidity(
-        "Please enter a unique URL, not a duplicate of a previous one.",
+        "Please don't duplicate URLs. A larger weight number can be used to increase a URL's likelihood.",
       );
       continue;
     }
